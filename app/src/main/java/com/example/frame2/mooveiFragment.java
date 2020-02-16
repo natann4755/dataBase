@@ -35,6 +35,7 @@ public class mooveiFragment extends Fragment implements OnMooveiClickLisener {
     private ArrayList <Result> myresults;
     private  ArrayList <Result> newresults;
     private Button buttonAddMore;
+    private Button removeDB;
     private static int counterPage = 1;
 
     static mooveiFragment newInstant (ArrayList<Result> mylist){
@@ -81,7 +82,13 @@ public class mooveiFragment extends Fragment implements OnMooveiClickLisener {
             }
         });
 
-
+        removeDB = vveiw.findViewById(R.id.frem1_botton_delet_db);
+        removeDB.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                AddDataBase.getInstance(getActivity()).mooveiDao().deleteAll();
+            }
+        });
         return vveiw;
     }
 

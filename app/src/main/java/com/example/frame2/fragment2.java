@@ -3,7 +3,6 @@ package com.example.frame2;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -34,6 +33,7 @@ public class fragment2 extends Fragment {
     private TextView titel;
     private TextView ttext;
     private List<ResultsItem> myResponses;
+
     private ProgressBar myProgressBar;
 
 
@@ -85,27 +85,32 @@ public class fragment2 extends Fragment {
             @Override
             public void onClick(View v) {
                 myProgressBar.setVisibility(View.VISIBLE);
-                Call <Response> myCall = TMDBRetrofistRest.myMooveiServich.searchMobiesTrealer(String.valueOf(data.getId()),MainActivity.keyMoovey);
-                myCall.enqueue(new Callback<Response>() {
-                    @Override
-                    public void onResponse(Call<Response> call, retrofit2.Response<Response> response) {
-                        myResponses = response.body().getResults();
-                        Intent intent = new Intent(Intent.ACTION_VIEW, Uri.parse(
-                                "https://www.youtube.com/watch?v="+myResponses.get(0).getKey()));
+                ResultsItem resultFromDB  = AddDataBase.getInstance(getActivity()).trealerDao().getTreailer((data.getId()));
+                if (resultFromDB != null){
+                    Intent intent = new Intent(Intent.ACTION_VIEW, Uri.parse(
+                            "https://www.youtube.com/watch?v="+resultFromDB.getKey()));
+                    startActivity(intent);
+                    myProgressBar.setVisibility(View.GONE);
+                }else {
+                    Call <Response> myCall = TMDBRetrofistRest.myMooveiServich.searchMobiesTrealer(String.valueOf(data.getId()),MainActivity.keyMoovey);
+                    myCall.enqueue(new Callback<Response>() {
+                        @Override
+                        public void onResponse(Call<Response> call, retrofit2.Response<Response> response) {
+                            myResponses = response.body().getResults();
+                            myResponses.get(0).setMooveyId(data.getId());
+                            AddDataBase.getInstance(getActivity()).trealerDao().insert(myResponses.get(0));
+                            Intent intent = new Intent(Intent.ACTION_VIEW, Uri.parse(
+                                    "https://www.youtube.com/watch?v="+myResponses.get(0).getKey()));
+                            startActivity(intent);
+                            myProgressBar.setVisibility(View.GONE);
+                        }
+                        @Override
+                        public void onFailure(Call<Response> call, Throwable t) {
 
-                        startActivity(intent);
-                        myProgressBar.setVisibility(View.GONE);
-                    }
-
-                    @Override
-                    public void onFailure(Call<Response> call, Throwable t) {
-
-                    }
-                });
-
+                        }
+                    });
+                }
             }
         });
     }
-
-
 }

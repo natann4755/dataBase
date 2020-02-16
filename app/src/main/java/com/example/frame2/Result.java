@@ -13,6 +13,22 @@ import com.google.gson.annotations.SerializedName;
 @Entity
 public class Result implements Parcelable {
 
+    public Result(Double popularity, Integer voteCount, Boolean video, String posterPath, Integer id, Boolean adult, String backdropPath, String originalLanguage, String originalTitle, String title, Double voteAverage, String overview, String releaseDate) {
+        this.popularity = popularity;
+        this.voteCount = voteCount;
+        this.video = video;
+        this.posterPath = posterPath;
+        this.id = id;
+        this.adult = adult;
+        this.backdropPath = backdropPath;
+        this.originalLanguage = originalLanguage;
+        this.originalTitle = originalTitle;
+        this.title = title;
+        this.voteAverage = voteAverage;
+        this.overview = overview;
+        this.releaseDate = releaseDate;
+    }
+
     @SerializedName("popularity")
     @Expose
     private Double popularity;
@@ -41,9 +57,9 @@ public class Result implements Parcelable {
     @SerializedName("original_title")
     @Expose
     private String originalTitle;
-    @SerializedName("genre_ids")
-    @Expose
-    private List<Integer> genreIds = null;
+//    @SerializedName("genre_ids")
+//    @Expose
+//    private List<Integer> genreIds;
     @SerializedName("title")
     @Expose
     private String title;
@@ -175,13 +191,13 @@ public class Result implements Parcelable {
         this.originalTitle = originalTitle;
     }
 
-    public List<Integer> getGenreIds() {
-        return genreIds;
-    }
-
-    public void setGenreIds(List<Integer> genreIds) {
-        this.genreIds = genreIds;
-    }
+//    public List<Integer> getGenreIds() {
+//        return genreIds;
+//    }
+//
+//    public void setGenreIds(List<Integer> genreIds) {
+//        this.genreIds = genreIds;
+//    }
 
     public String getTitle() {
         return title;

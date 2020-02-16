@@ -1,13 +1,9 @@
 package com.example.frame2;
 
-import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
-import android.view.Menu;
-import android.view.MenuItem;
 
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.appcompat.widget.Toolbar;
 import androidx.fragment.app.Fragment;
 import androidx.viewpager.widget.ViewPager;
 
@@ -20,11 +16,13 @@ import retrofit2.Response;
 
 public class MainActivity extends AppCompatActivity implements OnMovieFragmentClickListener {
 
+    private static final String TAG = MainActivity.class.getSimpleName();
     private ViewPager tabletframeLayout = null;
     private mooveiFragment mymooveiFragment ;
 
      static final String keyMoovey = "566b08e0f0f5d9d9ba6089a67537433c";
     private List<Result> mylist;
+    List <Result> mooveiFromDB;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -47,11 +45,12 @@ public class MainActivity extends AppCompatActivity implements OnMovieFragmentCl
 
     private void loadMoveis(){
 
-        final List <Result> mooveiFromDB = AddDataBase.getInstans((Callback<ImegeSearchResult>) this).mooveiDao().getAll();
+       mooveiFromDB = AddDataBase.getInstance(this).mooveiDao().getAll();
         if (mooveiFromDB != null){
             mylist = mooveiFromDB;
             mymooveiFragment = mooveiFragment.newInstant((ArrayList<Result>) mylist);
             getSupportFragmentManager().beginTransaction().add(R.id.AM_FrameLayout, mymooveiFragment).commit();
+            Log.d(TAG, "loadMoveis: ");
         }
         Call <ImegeSearchResult> myCall = TMDBRetrofistRest.myMooveiServich.searchMobiesByPepuler(keyMoovey,1);
         myCall.enqueue(new Callback<ImegeSearchResult>() {
@@ -62,13 +61,13 @@ public class MainActivity extends AppCompatActivity implements OnMovieFragmentCl
                     if (mooveiFromDB == null) {
                         mymooveiFragment = mooveiFragment.newInstant((ArrayList<Result>) mylist);
                         getSupportFragmentManager().beginTransaction().add(R.id.AM_FrameLayout, mymooveiFragment).commit();
-//                        mymooveiFragment.SetData(mylist);
-                    }
-                    AddDataBase.getInstans(this).mooveiDao().deleteAll();
-                    AddDataBase.getInstans(this).mooveiDao().insertAll((ArrayList<Result>) mylist);
 
+                    }
+                    AddDataBase.getInstance(MainActivity.this).mooveiDao().deleteAll();
+                    AddDataBase.getInstance(MainActivity.this).mooveiDao().insertAll((ArrayList<Result>) mylist);
+                    Log.d(TAG, "onResponse: ");
                     if (mooveiFromDB != null){
-                        mymooveiFragment.SetData(mylist);
+                       mymooveiFragment.SetData(mylist);
                     }
                     }
 
