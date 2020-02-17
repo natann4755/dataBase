@@ -52,37 +52,29 @@ public class MainActivity extends AppCompatActivity implements OnMovieFragmentCl
             getSupportFragmentManager().beginTransaction().add(R.id.AM_FrameLayout, mymooveiFragment).commit();
             Log.d(TAG, "loadMoveis: ");
         }
-        Call <ImegeSearchResult> myCall = TMDBRetrofistRest.myMooveiServich.searchMobiesByPepuler(keyMoovey,1);
-        myCall.enqueue(new Callback<ImegeSearchResult>() {
-            @Override
-            public void onResponse(Call<ImegeSearchResult> call, Response<ImegeSearchResult> response) {
-                if (response.isSuccessful()){
-                    mylist = response.body().getResults();
-                    if (mooveiFromDB.size()==0) {
+        else {
+            Call <ImegeSearchResult> myCall = TMDBRetrofistRest.myMooveiServich.searchMobiesByPepuler(keyMoovey,1);
+            myCall.enqueue(new Callback<ImegeSearchResult>() {
+                @Override
+                public void onResponse(Call<ImegeSearchResult> call, Response<ImegeSearchResult> response) {
+                    if (response.isSuccessful()){
+                        mylist = response.body().getResults();
                         mymooveiFragment = mooveiFragment.newInstant((ArrayList<Result>) mylist);
                         getSupportFragmentManager().beginTransaction().add(R.id.AM_FrameLayout, mymooveiFragment).commit();
-
+                        AddDataBase.getInstance(MainActivity.this).mooveiDao().insertAll((ArrayList<Result>) mylist);
+                        Log.d(TAG, "onResponse: ");
                     }
-                    AddDataBase.getInstance(MainActivity.this).mooveiDao().deleteAll();
-                    AddDataBase.getInstance(MainActivity.this).mooveiDao().insertAll((ArrayList<Result>) mylist);
-                    Log.d(TAG, "onResponse: ");
-                    if (mooveiFromDB.size()>0){
-                       mymooveiFragment.SetData(mylist);
-                    }
-                    }
+        }
+                @Override
+                public void onFailure(Call<ImegeSearchResult> call, Throwable t) {
+                }
+            });
 
                     if (tabletframeLayout != null) {
                         simpelPageAdapter mysimpelPageAdapter = new simpelPageAdapter(getSupportFragmentManager(), fragmentList());
                         tabletframeLayout.setAdapter(mysimpelPageAdapter);
                     }
                 }
-
-
-
-            @Override
-            public void onFailure(Call<ImegeSearchResult> call, Throwable t) {
-            }
-        });
     }
 
     @Override

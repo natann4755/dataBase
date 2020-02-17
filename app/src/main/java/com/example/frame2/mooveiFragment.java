@@ -1,6 +1,7 @@
 package com.example.frame2;
 
 import android.content.Context;
+import android.content.SharedPreferences;
 import android.os.Build;
 import android.os.Bundle;
 import android.view.LayoutInflater;
@@ -36,7 +37,8 @@ public class mooveiFragment extends Fragment implements OnMooveiClickLisener {
     private  ArrayList <Result> newresults;
     private Button buttonAddMore;
     private Button removeDB;
-    private static int counterPage = 1;
+    private static int counterPage;
+    public static final String keycounterPage = "keycounterPage";
 
     static mooveiFragment newInstant (ArrayList<Result> mylist){
         mooveiFragment myMooveiFragment = new mooveiFragment();
@@ -76,8 +78,8 @@ public class mooveiFragment extends Fragment implements OnMooveiClickLisener {
         buttonAddMore.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                counterPage++;
 
+                initCounter();
                 addMooveus(counterPage);
             }
         });
@@ -87,9 +89,25 @@ public class mooveiFragment extends Fragment implements OnMooveiClickLisener {
             @Override
             public void onClick(View v) {
                 AddDataBase.getInstance(getActivity()).mooveiDao().deleteAll();
+                SharedPreferences settings = getActivity().getSharedPreferences("my page",0);
+                counterPage = settings.getInt(keycounterPage, 1);
+                counterPage=1;
+                SharedPreferences.Editor edt = settings.edit();
+                edt.putInt(keycounterPage,counterPage);
+                edt.apply();
+
             }
         });
         return vveiw;
+    }
+
+    private void initCounter() {
+        SharedPreferences settings = getActivity().getSharedPreferences("my page",0);
+        counterPage = settings.getInt(keycounterPage, 1);
+        counterPage++;
+        SharedPreferences.Editor edt = settings.edit();
+        edt.putInt(keycounterPage,counterPage);
+        edt.apply();
     }
 
     private void intimyRecyclerView() {
@@ -117,6 +135,7 @@ public class mooveiFragment extends Fragment implements OnMooveiClickLisener {
                 if (response.isSuccessful()){
                     newresults = (ArrayList) response.body().getResults();
                     newresults.addAll(myresults);
+                    AddDataBase.getInstance(getActivity()).mooveiDao().insertAll(newresults);
                     SetData(newresults);
                 }
             }
