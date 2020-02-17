@@ -46,7 +46,7 @@ public class MainActivity extends AppCompatActivity implements OnMovieFragmentCl
     private void loadMoveis(){
 
        mooveiFromDB = AddDataBase.getInstance(this).mooveiDao().getAll();
-        if (mooveiFromDB != null){
+        if (mooveiFromDB.size()>0){
             mylist = mooveiFromDB;
             mymooveiFragment = mooveiFragment.newInstant((ArrayList<Result>) mylist);
             getSupportFragmentManager().beginTransaction().add(R.id.AM_FrameLayout, mymooveiFragment).commit();
@@ -58,7 +58,7 @@ public class MainActivity extends AppCompatActivity implements OnMovieFragmentCl
             public void onResponse(Call<ImegeSearchResult> call, Response<ImegeSearchResult> response) {
                 if (response.isSuccessful()){
                     mylist = response.body().getResults();
-                    if (mooveiFromDB == null) {
+                    if (mooveiFromDB.size()==0) {
                         mymooveiFragment = mooveiFragment.newInstant((ArrayList<Result>) mylist);
                         getSupportFragmentManager().beginTransaction().add(R.id.AM_FrameLayout, mymooveiFragment).commit();
 
@@ -66,7 +66,7 @@ public class MainActivity extends AppCompatActivity implements OnMovieFragmentCl
                     AddDataBase.getInstance(MainActivity.this).mooveiDao().deleteAll();
                     AddDataBase.getInstance(MainActivity.this).mooveiDao().insertAll((ArrayList<Result>) mylist);
                     Log.d(TAG, "onResponse: ");
-                    if (mooveiFromDB != null){
+                    if (mooveiFromDB.size()>0){
                        mymooveiFragment.SetData(mylist);
                     }
                     }

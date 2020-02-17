@@ -117,25 +117,21 @@ public class mooveiFragment extends Fragment implements OnMooveiClickLisener {
                 if (response.isSuccessful()){
                     newresults = (ArrayList) response.body().getResults();
                     newresults.addAll(myresults);
-                    updateData(newresults);
+                    SetData(newresults);
                 }
             }
 
-            private void updateData(ArrayList <Result> myNewList) {
-                myresults.clear();
-                myresults.addAll(myNewList);
-                myAdapter.notifyDataSetChanged();
-            }
+
 
             @Override
             public void onFailure(Call<ImegeSearchResult> call, Throwable t) {
             }
         });
     }
-
-    public void SetData(List<Result> newItems){
+    public void SetData(List<Result> mylist) {
         myresults.clear();
-        myresults.addAll(newItems);
+        myresults.addAll(mylist);
         myAdapter.notifyDataSetChanged();
     }
+
 }
