@@ -154,9 +154,10 @@ public class mooveiFragment extends Fragment implements OnMooveiClickLisener {
             public void onResponse(Call<ImegeSearchResult> call, Response<ImegeSearchResult> response) {
                 if (response.isSuccessful()){
                     newresults = (ArrayList) response.body().getResults();
-                    newresults.addAll(myresults);
-                    AddDataBase.getInstance(getActivity()).mooveiDao().insertAll(newresults);
-                    myAdapter.SetData(newresults);
+                    myresults.addAll(newresults);
+                    AddDataBase.getInstance(getActivity()).mooveiDao().deleteAll();
+                    AddDataBase.getInstance(getActivity()).mooveiDao().insertAll(myresults);
+                    myAdapter.SetData(myresults);
                 }
             }
 

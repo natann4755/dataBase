@@ -62,7 +62,7 @@ public class mooveyVeiwAdapter extends RecyclerView.Adapter <mooveyVeiwAdapter.V
         return new Filter() {
             @Override
             protected FilterResults performFiltering(CharSequence constraint) {
-                myFilterdata.clear();
+//                myFilterdata.clear();
                 FilterResults mFilterResults = new FilterResults();
                 ArrayList<Result> myArrey = new ArrayList<>();
                 for (Result r : mydata) {
