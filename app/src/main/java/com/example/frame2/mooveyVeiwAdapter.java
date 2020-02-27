@@ -5,6 +5,8 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Filter;
+import android.widget.Filterable;
 import android.widget.ImageView;
 import android.widget.ProgressBar;
 import android.widget.TextView;
@@ -15,13 +17,16 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.squareup.picasso.Picasso;
 
 import java.util.ArrayList;
+import java.util.List;
 
-public class mooveyVeiwAdapter extends RecyclerView.Adapter <mooveyVeiwAdapter.VeiwHolder> {
+public class mooveyVeiwAdapter extends RecyclerView.Adapter <mooveyVeiwAdapter.VeiwHolder> implements Filterable {
 
 
     private OnMooveiClickLisener MyonMooveiClickLisener;
     private LayoutInflater inflater;
     private ArrayList<Result> mydata;
+    private ArrayList<Result> myFilterdata = new ArrayList<>();
+
 
     @NonNull
     @Override
@@ -32,14 +37,14 @@ public class mooveyVeiwAdapter extends RecyclerView.Adapter <mooveyVeiwAdapter.V
 
     @Override
     public void onBindViewHolder(@NonNull VeiwHolder holder, int position) {
-        holder.onbindSet(mydata.get(position));
+        holder.onbindSet(myFilterdata.get(position));
 
 
     }
 
     @Override
     public int getItemCount() {
-        return mydata.size();
+        return myFilterdata.size();
     }
 
 
@@ -47,7 +52,43 @@ public class mooveyVeiwAdapter extends RecyclerView.Adapter <mooveyVeiwAdapter.V
     public mooveyVeiwAdapter (Context context, OnMooveiClickLisener lisiner,  ArrayList<Result> data){
         MyonMooveiClickLisener = lisiner;
         mydata=data;
+        myFilterdata.addAll(mydata);
         inflater= (LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+    }
+
+    @Override
+    public Filter getFilter() {
+
+        return new Filter() {
+            @Override
+            protected FilterResults performFiltering(CharSequence constraint) {
+                myFilterdata.clear();
+                FilterResults mFilterResults = new FilterResults();
+                ArrayList<Result> myArrey = new ArrayList<>();
+                for (Result r : mydata) {
+                    if (r.getTitle().toLowerCase().contains(constraint.toString().toLowerCase())) {
+                        myArrey.add(r);
+                    }
+                }
+                mFilterResults.values = myArrey;
+                mFilterResults.count = myArrey.size();
+                return mFilterResults;
+            }
+
+            @Override
+            protected void publishResults(CharSequence constraint, FilterResults results) {
+
+                myFilterdata = (ArrayList<Result>) results.values;
+                notifyDataSetChanged();
+
+            }
+        };
+
+    }
+    public void SetData(List<Result> mylist) {
+        myFilterdata.clear();
+        myFilterdata.addAll(mylist);
+        notifyDataSetChanged();
     }
 
 

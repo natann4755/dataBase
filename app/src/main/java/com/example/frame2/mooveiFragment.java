@@ -10,6 +10,7 @@ import android.view.MenuInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
+import android.widget.SearchView;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -31,7 +32,7 @@ public class mooveiFragment extends Fragment implements OnMooveiClickLisener {
 
     private RecyclerView myRecyclerView;
     private RecyclerView.LayoutManager mylayoutManager;
-    private RecyclerView.Adapter myAdapter;
+    private mooveyVeiwAdapter myAdapter;
     static final String key = "key";
     private ArrayList <Result> myresults;
     private  ArrayList <Result> newresults;
@@ -39,6 +40,7 @@ public class mooveiFragment extends Fragment implements OnMooveiClickLisener {
     private Button removeDB;
     private static int counterPage;
     public static final String keycounterPage = "keycounterPage";
+    private SearchView mSearchView;
 
     static mooveiFragment newInstant (ArrayList<Result> mylist){
         mooveiFragment myMooveiFragment = new mooveiFragment();
@@ -71,6 +73,9 @@ public class mooveiFragment extends Fragment implements OnMooveiClickLisener {
         View vveiw = inflater.inflate(R.layout.ferm1,container,false);
         myresults = getArguments().getParcelableArrayList(key);
         myRecyclerView = vveiw.findViewById(R.id.FM_rv);
+        mSearchView = vveiw.findViewById(R.id.SearchView);
+
+        initSearchView();
 
         intimyRecyclerView();
 
@@ -99,6 +104,21 @@ public class mooveiFragment extends Fragment implements OnMooveiClickLisener {
             }
         });
         return vveiw;
+    }
+
+    private void initSearchView() {
+        mSearchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
+            @Override
+            public boolean onQueryTextSubmit(String query) {
+                return false;
+            }
+
+            @Override
+            public boolean onQueryTextChange(String newText) {
+                myAdapter.getFilter().filter(newText);
+                return true;
+            }
+        });
     }
 
     private void initCounter() {
@@ -136,7 +156,7 @@ public class mooveiFragment extends Fragment implements OnMooveiClickLisener {
                     newresults = (ArrayList) response.body().getResults();
                     newresults.addAll(myresults);
                     AddDataBase.getInstance(getActivity()).mooveiDao().insertAll(newresults);
-                    SetData(newresults);
+                    myAdapter.SetData(newresults);
                 }
             }
 
@@ -147,10 +167,6 @@ public class mooveiFragment extends Fragment implements OnMooveiClickLisener {
             }
         });
     }
-    public void SetData(List<Result> mylist) {
-        myresults.clear();
-        myresults.addAll(mylist);
-        myAdapter.notifyDataSetChanged();
-    }
+
 
 }
