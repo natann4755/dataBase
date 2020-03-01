@@ -62,7 +62,7 @@ public class mooveyVeiwAdapter extends RecyclerView.Adapter <mooveyVeiwAdapter.V
         return new Filter() {
             @Override
             protected FilterResults performFiltering(CharSequence constraint) {
-//                myFilterdata.clear();
+
                 FilterResults mFilterResults = new FilterResults();
                 ArrayList<Result> myArrey = new ArrayList<>();
                 for (Result r : mydata) {
@@ -78,6 +78,10 @@ public class mooveyVeiwAdapter extends RecyclerView.Adapter <mooveyVeiwAdapter.V
             @Override
             protected void publishResults(CharSequence constraint, FilterResults results) {
 
+                if (constraint==null||constraint.length()==0){
+                    return;
+                }
+                myFilterdata.clear();
                 myFilterdata = (ArrayList<Result>) results.values;
                 notifyDataSetChanged();
 
